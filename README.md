@@ -13,6 +13,8 @@ Key features:
 - Support for dynamic styling and property updates
 - Simplified handling of map markers, polygons, and other geometries
 
+### [Changelog](CHANGELOG.md)
+
 ## API Key Setup
 
 To run the application, you need to obtain an API key for map style access.

@@ -1,6 +1,5 @@
 package ru.wb.mapkit.mapcompose.demoapp.demos
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,14 +10,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import ru.wb.mapkit.mapcompose.WbMap
 import ru.wb.mapkit.mapcompose.demoapp.R
 import ru.wb.mapkit.mapcompose.demoapp.utils.FONT
 import ru.wb.mapkit.mapcompose.demoapp.utils.IS_SELECTED_PROPERTY
+import ru.wb.mapkit.mapcompose.demoapp.utils.collectStyleProviderAsState
 import ru.wb.mapkit.mapcompose.demoapp.utils.generateRandomFeatures
-import ru.wb.mapkit.mapcompose.demoapp.utils.rememberWBStyleProvider
 import ru.wb.mapkit.mapcompose.lib.Attribution
 import ru.wb.mapkit.mapcompose.lib.CameraPosition
 import ru.wb.mapkit.mapcompose.lib.UiSettings
@@ -32,13 +32,13 @@ import ru.wb.mapkit.mapcompose.lib.core.step
 import ru.wb.mapkit.mapcompose.lib.core.switchCase
 import ru.wb.mapkit.mapcompose.lib.layers.FeatureClickHandler
 import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonOptions
-import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.layers.Geometry
 import ru.wb.mapkit.mapcompose.lib.layers.MapImage
 import ru.wb.mapkit.mapcompose.lib.layers.SymbolLayer
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImageAnchor
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImagePropertiesBuilder
 import ru.wb.mapkit.mapcompose.lib.layers.properties.TextPropertiesBuilder
+import ru.wb.mapkit.mapcompose.lib.layers.rememberGeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.rememberCameraPositionState
 import ru.wb.mapkit.mapcompose.models.LatLng
 
@@ -91,8 +91,8 @@ object SimpleMap : Demo() {
             WbMap(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color.Transparent),
-                styleProvider = rememberWBStyleProvider(),
+                    .testTag("map_container"),
+                styleProvider = collectStyleProviderAsState(),
                 cameraPositionState = cameraPositionState,
                 uiSettings = UiSettings(
                     rotateGesturesEnabled = false,
@@ -104,10 +104,8 @@ object SimpleMap : Demo() {
                 ),
                 onMapClick = { selectedFeatureId = null }
             ) {
-                val sourceId = "simple-map-source-id"
-
-                GeoJsonSource(
-                    id = sourceId,
+                val source = rememberGeoJsonSource(
+                    id = "simple-map-source-id",
                     features = features,
                     options = GeoJsonOptions(
                         cluster = true,
@@ -116,7 +114,7 @@ object SimpleMap : Demo() {
                     )
                 )
 
-                ClusterLayer(sourceId) {
+                ClusterLayer(source.id) {
                     // Обработчик нажатия на feature, которая в данном случае кластер
                     // Приближаем к ему камеру
                     cameraPositionState.position = CameraPosition(
@@ -128,7 +126,7 @@ object SimpleMap : Demo() {
                     true
                 }
 
-                FeatureLayer(sourceId) { feature ->
+                FeatureLayer(source.id) { feature ->
                     // Обработчик нажатия на feature
 
                     // Если кликаем на уже кликнутую, то ничего не делаем

@@ -1,6 +1,5 @@
 package ru.wb.mapkit.mapcompose.demoapp.demos
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -17,10 +16,10 @@ import androidx.navigation.compose.composable
 import ru.wb.mapkit.mapcompose.WbMap
 import ru.wb.mapkit.mapcompose.demoapp.R
 import ru.wb.mapkit.mapcompose.demoapp.utils.FONT
+import ru.wb.mapkit.mapcompose.demoapp.utils.collectStyleProviderAsState
 import ru.wb.mapkit.mapcompose.demoapp.utils.convertDrawableToBitmap
 import ru.wb.mapkit.mapcompose.demoapp.utils.createImageStretchForBitmap
 import ru.wb.mapkit.mapcompose.demoapp.utils.generateRandomFeatures
-import ru.wb.mapkit.mapcompose.demoapp.utils.rememberWBStyleProvider
 import ru.wb.mapkit.mapcompose.lib.CameraPosition
 import ru.wb.mapkit.mapcompose.lib.UiSettings
 import ru.wb.mapkit.mapcompose.lib.ZoomButtons
@@ -30,13 +29,13 @@ import ru.wb.mapkit.mapcompose.lib.core.literal
 import ru.wb.mapkit.mapcompose.lib.core.switchCase
 import ru.wb.mapkit.mapcompose.lib.layers.FeatureClickHandler
 import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonOptions
-import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.layers.Geometry
 import ru.wb.mapkit.mapcompose.lib.layers.MapImage
 import ru.wb.mapkit.mapcompose.lib.layers.SymbolLayer
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImagePropertiesBuilder
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImageTextFit
 import ru.wb.mapkit.mapcompose.lib.layers.properties.TextPropertiesBuilder
+import ru.wb.mapkit.mapcompose.lib.layers.rememberGeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.rememberCameraPositionState
 import ru.wb.mapkit.mapcompose.models.LatLng
 
@@ -61,7 +60,6 @@ object StretchableImages : Demo() {
     @Composable
     fun Map(
         modifier: Modifier = Modifier,
-        isSystemNightMode: Boolean = isSystemInDarkTheme(),
     ) {
         val moscow = remember {
             CameraPosition(
@@ -94,7 +92,7 @@ object StretchableImages : Demo() {
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("map_container"),
-                styleProvider = rememberWBStyleProvider(),
+                styleProvider = collectStyleProviderAsState(),
                 cameraPositionState = cameraPositionState,
                 uiSettings = UiSettings(
                     rotateGesturesEnabled = false,
@@ -102,15 +100,13 @@ object StretchableImages : Demo() {
                 ),
                 onMapClick = { selectedFeatureId = null }
             ) {
-                val sourceId = "stretchable-images-source-id"
-
-                GeoJsonSource(
-                    id = sourceId,
+                val source = rememberGeoJsonSource(
+                    id = "stretchable-images-source-id",
                     features = features,
                     options = GeoJsonOptions(cluster = false)
                 )
 
-                Features(sourceId) {
+                Features(source.id) {
                     cameraPositionState.position = CameraPosition(
                         target = (it.geometry as Geometry.Point).latLng,
                         zoom = cameraPositionState.position.zoom?.plus(2.0)?.coerceAtMost(16.0)

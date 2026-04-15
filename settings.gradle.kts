@@ -1,12 +1,6 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -18,9 +12,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
         maven {
-            url = uri("${rootProject.projectDir}/local-repository")
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/wildberries-tech/wbmap-sdk-android")
+            credentials {
+                val githubUser: String by settings
+                val githubToken: String by settings
+
+                username = githubUser
+                password = githubToken
+            }
         }
     }
 }

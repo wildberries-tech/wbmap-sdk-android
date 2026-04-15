@@ -1,5 +1,6 @@
 package ru.wb.mapkit.mapcompose.demoapp.demos
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import ru.wb.mapkit.mapcompose.demoapp.LocalNavController
+import ru.wb.mapkit.mapcompose.demoapp.ui.theme.AppTheme
 
 object MapInLazyList : Demo() {
     override val route: String = this.javaClass.name
@@ -48,12 +50,14 @@ object MapInLazyList : Demo() {
             composable(secondScreenRoute) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(color = AppTheme.colors.bgLevel1),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "Тестовый второй экран для тестирования перехода из списка на другой экран и возврата в список",
                         fontSize = 24.sp,
+                        color = AppTheme.colors.textPrimary,
                         textAlign = TextAlign.Center
                     )
                 }

@@ -16,9 +16,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import ru.wb.mapkit.mapcompose.WbMap
 import ru.wb.mapkit.mapcompose.demoapp.R
+import ru.wb.mapkit.mapcompose.demoapp.utils.collectStyleProviderAsState
 import ru.wb.mapkit.mapcompose.demoapp.utils.createRoundedRectTextBitmap
 import ru.wb.mapkit.mapcompose.demoapp.utils.generateRandomFeatures
-import ru.wb.mapkit.mapcompose.demoapp.utils.rememberWBStyleProvider
 import ru.wb.mapkit.mapcompose.lib.CameraMotionType
 import ru.wb.mapkit.mapcompose.lib.CameraPosition
 import ru.wb.mapkit.mapcompose.lib.LayerInsertInfo
@@ -41,13 +41,13 @@ import ru.wb.mapkit.mapcompose.lib.core.step
 import ru.wb.mapkit.mapcompose.lib.layers.ClusterProperty
 import ru.wb.mapkit.mapcompose.lib.layers.FeatureClickHandler
 import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonOptions
-import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.layers.Geometry
 import ru.wb.mapkit.mapcompose.lib.layers.MapImage
 import ru.wb.mapkit.mapcompose.lib.layers.SymbolLayer
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImageAnchor
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImagePropertiesBuilder
 import ru.wb.mapkit.mapcompose.lib.layers.properties.TextPropertiesBuilder
+import ru.wb.mapkit.mapcompose.lib.layers.rememberGeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.rememberCameraPositionState
 import ru.wb.mapkit.mapcompose.models.LatLng
 
@@ -110,7 +110,7 @@ object ClusterWithCustomAggregation : Demo() {
         Box(modifier = modifier.fillMaxSize()) {
             WbMap(
                 modifier = Modifier.fillMaxSize(),
-                styleProvider = rememberWBStyleProvider(),
+                styleProvider = collectStyleProviderAsState(),
                 cameraPositionState = cameraPositionState,
                 uiSettings = UiSettings(
                     rotateGesturesEnabled = false,
@@ -118,10 +118,8 @@ object ClusterWithCustomAggregation : Demo() {
                 ),
                 onMapClick = { selectedFeatureId = null }
             ) {
-                val sourceId = "cluster-with-custom-aggregation-source-id"
-
-                GeoJsonSource(
-                    id = sourceId,
+                val source = rememberGeoJsonSource(
+                    id = "cluster-with-custom-aggregation-source-id",
                     features = features,
                     options = GeoJsonOptions(
                         cluster = true,
@@ -144,22 +142,24 @@ object ClusterWithCustomAggregation : Demo() {
                     )
                 )
 
-                val clusterCountLayerId = "cluster-count-$sourceId"
+                val clusterCountLayerId = "cluster-count-$${source.id}"
 
                 // Указываем, что слой с ценами необходимо расположить над (above) слоем с количеством
                 val insertInfo = LayerInsertInfo(referenceLayerId = clusterCountLayerId, insertPosition = LayerInsertMethod.INSERT_ABOVE)
-                ClusterPrices(sourceId = sourceId, insertInfo = insertInfo)
+                ClusterPrices(sourceId = source.id, insertInfo = insertInfo)
 
-                ClusterCount(sourceId = sourceId, layerId = clusterCountLayerId) {
+                ClusterCount(sourceId = source.id, layerId = clusterCountLayerId) {
+                    val expansionZoom = source.getClusterExpansionZoom(it) ?: return@ClusterCount true
+
                     cameraPositionState.position = CameraPosition(
                         target = (it.geometry as Geometry.Point).latLng,
-                        zoom = cameraPositionState.position.zoom?.plus(2.0)?.coerceAtMost(16.0)
+                        zoom = expansionZoom.toDouble()
                     )
 
                     true
                 }
 
-                Regular(sourceId) {
+                Regular(source.id) {
                     cameraPositionState.position = CameraPosition(
                         target = (it.geometry as Geometry.Point).latLng,
                         zoom = cameraPositionState.position.zoom?.plus(2.0)?.coerceAtMost(16.0),
@@ -170,9 +170,9 @@ object ClusterWithCustomAggregation : Demo() {
                     true
                 }
 
-                Selected(sourceId) { true }
+                Selected(source.id) { true }
 
-                SelectedPrices(sourceId)
+                SelectedPrices(source.id)
             }
         }
     }

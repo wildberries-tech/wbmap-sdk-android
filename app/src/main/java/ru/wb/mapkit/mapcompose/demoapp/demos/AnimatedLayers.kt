@@ -48,8 +48,8 @@ import ru.wb.mapkit.mapcompose.demoapp.R
 import ru.wb.mapkit.mapcompose.demoapp.SemanticsKeys
 import ru.wb.mapkit.mapcompose.demoapp.ui.theme.ThemeIcons
 import ru.wb.mapkit.mapcompose.demoapp.utils.FONT
+import ru.wb.mapkit.mapcompose.demoapp.utils.collectStyleProviderAsState
 import ru.wb.mapkit.mapcompose.demoapp.utils.generateRandomFeatures
-import ru.wb.mapkit.mapcompose.demoapp.utils.rememberWBStyleProvider
 import ru.wb.mapkit.mapcompose.lib.Attribution
 import ru.wb.mapkit.mapcompose.lib.CameraPosition
 import ru.wb.mapkit.mapcompose.lib.UiSettings
@@ -59,13 +59,13 @@ import ru.wb.mapkit.mapcompose.lib.core.has
 import ru.wb.mapkit.mapcompose.lib.core.hasNot
 import ru.wb.mapkit.mapcompose.lib.layers.CircleLayer
 import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonOptions
-import ru.wb.mapkit.mapcompose.lib.layers.GeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.layers.Geometry
 import ru.wb.mapkit.mapcompose.lib.layers.MapImage
 import ru.wb.mapkit.mapcompose.lib.layers.SymbolLayer
 import ru.wb.mapkit.mapcompose.lib.layers.properties.CirclePropertiesBuilder
 import ru.wb.mapkit.mapcompose.lib.layers.properties.ImagePropertiesBuilder
 import ru.wb.mapkit.mapcompose.lib.layers.properties.TextPropertiesBuilder
+import ru.wb.mapkit.mapcompose.lib.layers.rememberGeoJsonSource
 import ru.wb.mapkit.mapcompose.lib.rememberCameraPositionState
 import ru.wb.mapkit.mapcompose.models.LatLng
 
@@ -143,12 +143,11 @@ object AnimatedLayers : Demo() {
         }
 
         Box(modifier = modifier.fillMaxSize()) {
-
             WbMap(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("map_container"),
-                styleProvider = rememberWBStyleProvider(),
+                styleProvider = collectStyleProviderAsState(),
                 cameraPositionState = cameraPositionState,
                 uiSettings = UiSettings(
                     rotateGesturesEnabled = false,
@@ -175,8 +174,8 @@ object AnimatedLayers : Demo() {
 
                 val sourceId = "animated-layer-source-id"
 
-                GeoJsonSource(
-                    id = sourceId,
+                val source = rememberGeoJsonSource(
+                    id = "animated-layer-source-id",
                     features = features,
                     options = GeoJsonOptions(cluster = isClustering)
                 )
@@ -190,11 +189,11 @@ object AnimatedLayers : Demo() {
                     textProperties = textProperties,
                     imageProperties = imageProperties,
                     onClick = {
-                        Toast.makeText(context, "Cluster ${it.id} clicked", Toast.LENGTH_SHORT).show()
+                        val expansionZoom = source.getClusterExpansionZoom(it) ?: return@SymbolLayer true
 
                         cameraPositionState.position = CameraPosition(
                             target = (it.geometry as Geometry.Point).latLng,
-                            zoom = 16.0
+                            zoom = expansionZoom.toDouble()
                         )
 
                         true
@@ -205,7 +204,7 @@ object AnimatedLayers : Demo() {
                     }
                 )
 
-                AnimatedCircleLayer(sourceId)
+                AnimatedCircleLayer(source.id)
             }
 
             ActionsMenu(

@@ -1,33 +1,22 @@
 package ru.wb.mapkit.mapcompose.demoapp.utils
 
-import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.wb.mapkit.mapcompose.StyleProvider
-import ru.wb.mapkit.mapcompose.demoapp.BuildConfig
+import ru.wb.mapkit.mapcompose.demoapp.BuildConfig.API_KEY
+import ru.wb.mapkit.mapcompose.demoapp.MainViewModel
 
 @Composable
-fun rememberWBStyleProvider(isSystemNightMode: Boolean = isSystemInDarkTheme()) = remember(isSystemNightMode) {
-    StyleProvider.WB(BuildConfig.API_KEY, isSystemNightMode)
+internal fun collectStyleProviderAsState(): StyleProvider {
+    val viewModel = navControllerViewModel<MainViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    return state.selectedStyle?.provider ?: rememberWBStyleProvider()
 }
 
 @Composable
-fun rememberJsonStyleProvider(): StyleProvider {
-    val context = LocalContext.current
-
-    return remember {
-        val styleJson = readJsonFromAssets(context, "lightberry.json")
-        StyleProvider.FromJson(styleJson)
-    }
-}
-
-private fun readJsonFromAssets(context: Context, fileName: String): String {
-    return try {
-        context.assets.open(fileName).bufferedReader().use { it.readText() }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        "" // Возвращаем пустую строку в случае ошибки
-    }
+internal fun rememberWBStyleProvider(isSystemNightMode: Boolean = isSystemInDarkTheme()) = remember(isSystemNightMode) {
+    StyleProvider.WB(API_KEY, isSystemNightMode)
 }
