@@ -22,7 +22,7 @@ To run the application, you need to obtain an API key for map style access.
 
 ### Setting up the Key
 
-Add the key to the `gradle.properties` file in the project root:
+Add the key (in quotes) to the `gradle.properties` file in the project root:
 ```properties
 API_KEY="<<PUT YOUR API KEY HERE>>"
 ```
@@ -33,10 +33,10 @@ To run the application, you need to obtain an GitHub login and token for WBMap C
 
 ### Setting up credentials
 
-Add the keys to the `gradle.properties` file in the project root:
+Add the credentials (without quotes) to the `gradle.properties` file in the project root:
 ```properties
-githubUser="<<PUT YOUR GITHUB LOGIN HERE>>"
-githubToken="<<PUT YOUR GITHUB TOKEN HERE>>"
+githubUser=<<PUT YOUR GITHUB LOGIN HERE>>
+githubToken=<<PUT YOUR GITHUB TOKEN HERE>>
 ```
 
 ## Usage Example
