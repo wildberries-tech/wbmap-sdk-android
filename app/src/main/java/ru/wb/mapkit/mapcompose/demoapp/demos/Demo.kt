@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import ru.wb.mapkit.mapcompose.demoapp.DemoAppBar
+import ru.wb.mapkit.mapcompose.demoapp.ui.theme.AppTheme
 
 val DEMOS = buildList {
     add(SimpleMap)
@@ -16,7 +17,10 @@ val DEMOS = buildList {
     add(AnimatedLayers)
     add(AnnotationsMap)
     add(ComposableSymbols)
+    add(WbFeaturesLayer)
     add(UserLocation)
+    add(OfflineMap)
+    add(WbClusters)
     add(MapInLazyList)
 }
 
@@ -40,6 +44,7 @@ abstract class Demo {
     private fun DemoScaffold(demo: Demo, navigateUp: () -> Unit, content: @Composable () -> Unit) {
         Scaffold(
             topBar = { DemoAppBar(demo, navigateUp) },
+            containerColor = AppTheme.colors.bgLevel1,
         ) { padding ->
             Box(
                 modifier = Modifier

@@ -1,5 +1,6 @@
 package ru.wb.mapkit.mapcompose.demoapp.utils
 
+import android.content.Context
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -10,12 +11,20 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import com.google.gson.GsonBuilder
+import com.google.gson.stream.JsonReader
+import org.maplibre.geojson.GeometryAdapterFactory
+import org.maplibre.geojson.Point
+import org.maplibre.geojson.gson.GeoJsonAdapterFactory
 import ru.wb.mapkit.mapcompose.lib.layers.Feature
 import ru.wb.mapkit.mapcompose.lib.layers.Geometry
 import ru.wb.mapkit.mapcompose.models.BoundingBox
 import ru.wb.mapkit.mapcompose.models.LatLng
+import java.io.InputStreamReader
+import kotlin.collections.mapOf
 import kotlin.math.hypot
 import kotlin.random.Random
+import org.maplibre.geojson.Feature as MLFeature
 
 internal const val IS_SELECTED_PROPERTY = "is_selected"
 internal const val PRICE_PROPERTY = "price"
@@ -137,4 +146,53 @@ internal fun produceMoveState(startPoint: LatLng, endPoint: LatLng, durationMill
     )
 
     return LatLng(lat = lat.toDouble(), lng = lng.toDouble())
+}
+
+/**
+ * Читает большой geoJson файл и парсит из него [Feature]
+ */
+internal fun getFeaturesFromAssets(context: Context, fileName: String): List<Feature> {
+    val gson = GsonBuilder().apply {
+        registerTypeAdapterFactory(GeoJsonAdapterFactory.create())
+        registerTypeAdapterFactory(GeometryAdapterFactory.create())
+    }.create()
+
+    var id = 1
+
+    return buildList {
+        context.assets.open(fileName).use { inputStream ->
+            JsonReader(InputStreamReader(inputStream, "UTF-8")).use { reader ->
+                reader.beginObject()
+
+                while (reader.hasNext()) {
+                    when (reader.nextName()) {
+                        "features" -> {
+                            reader.beginArray()
+                            while (reader.hasNext()) {
+                                val feature = gson.fromJson<MLFeature>(reader, MLFeature::class.java)
+                                val coordinates = (feature.geometry() as? Point)!!.coordinates()
+
+                                add(
+                                    Feature(
+                                        id = id.toString(), // Внутри файла нет id
+                                        type = feature.type(),
+                                        geometry = Geometry.Point(latLng = LatLng(lat = coordinates[1], lng = coordinates[0])),
+                                        properties = mapOf(
+                                            PRICE_PROPERTY to ((Math.random() + 0.5) * 10_000).toInt(), // Произвольная цена
+                                        )
+                                    )
+                                )
+                                id++
+                            }
+                            reader.endArray()
+                        }
+
+                        else -> reader.skipValue()
+                    }
+                }
+
+                reader.endObject()
+            }
+        }
+    }
 }

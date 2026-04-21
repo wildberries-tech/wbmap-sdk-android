@@ -1,49 +1,79 @@
 [versions]
-agp = "8.7.3" # Не поднимать выше 8.7.3, иначе наш CI не сможет выполнить build
+agp = "9.1.0"
+kotlin = "2.2.21" # https://github.com/JetBrains/kotlin/releases
+ksp = "2.3.2"
+
+maplibre = "12.3.1"
+
+# Compose versions from BOM 2026.01.01
+androidx-compose-ui = "1.10.3"
+androidx-compose-foundation = "1.10.3"
+androidx-compose-material3 = "1.4.0"
+androidx-compose-ui-tooling = "1.10.3"
+androidx-compose-material-icons = "1.7.8"
+
+mapSdk = "1.12.0"
+metalava = "0.4.0-alpha03"
+ktor = "3.0.3"
+
 androidsvg = "1.4"
-kotlin = "2.0.21" # https://github.com/JetBrains/kotlin/releases
-coreKtx = "1.15.0"
+gson = "2.13.2"
+hiltAndroid = "2.57.2"
+hiltNavigationCompose = "1.3.0"
+coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-appcompat = "1.7.0"
-mapCompose = "1.8.0-public"
-
-androidx-compose-bom = "2025.03.01" # https://developer.android.com/develop/ui/compose/bom/bom-mapping
-lifecycleRuntimeKtx = "2.8.7"
-navigation = "2.8.9"
-activityCompose = "1.10.1" # https://github.com/Kotlin/kotlinx.serialization/releases
+maplibre-plugin-annotation = "3.0.2" # https://github.com/maplibre/maplibre-plugins-android/tree/main/plugin-annotation
+androidx_lifecycle = "2.10.0"
+navigation = "2.9.6"
+activityCompose = "1.12.0" # https://github.com/Kotlin/kotlinx.serialization/releases
 
 # ui tests
 androidx-compose-ui-test = "1.6.0"
 kaspresso = "1.6.0"
 playServicesLocation = "21.3.0"
 
-[libraries]
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx-compose-bom" }
-androidx-foundation = { group = "androidx.compose.foundation", name = "foundation-android" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-map-compose = { group = "ru.wildberries.mapkit", name = "map-compose", version.ref = "mapCompose" }
 
-material3 = { group = "androidx.compose.material3", name = "material3" }
-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+[libraries]
+map-sdk = { module = "ru.wildberries.mapkit:map-sdk", version.ref = "mapSdk" }
+maplibre-android = { module = "org.maplibre.gl:android-sdk", version.ref = "maplibre" }
+# Compose libraries with explicit versions
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "androidx-compose-ui" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "androidx-compose-foundation" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-compose-material3" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "androidx-compose-ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidx-compose-ui-tooling" }
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "androidx-compose-material-icons" }
+# Navigation and lifecycle
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx_lifecycle" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+
+androidsvg = { module = "com.caverock:androidsvg", version.ref = "androidsvg" }
+maplibre-plugin-annotation = { group = "org.maplibre.gl", name = "android-plugin-annotation-v9", version.ref = "maplibre-plugin-annotation" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+# Ktor
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui-test" }
-androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui-test" }
+# UI Test libraries with explicit versions
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "androidx-compose-ui" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "androidx-compose-ui-test" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "androidx-compose-ui-test" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
 
 [plugins]
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -51,4 +81,7 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
-
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+metalava = { id = "me.tylerbwong.gradle.metalava", version.ref = "metalava" }
+android-fusedlibrary = { id = "com.android.fused-library", version.ref = "agp" }

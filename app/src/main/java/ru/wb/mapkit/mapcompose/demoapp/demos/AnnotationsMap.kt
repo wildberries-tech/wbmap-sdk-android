@@ -1,6 +1,5 @@
 package ru.wb.mapkit.mapcompose.demoapp.demos
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,9 +13,9 @@ import androidx.navigation.compose.composable
 import ru.wb.mapkit.mapcompose.WbMap
 import ru.wb.mapkit.mapcompose.demoapp.R
 import ru.wb.mapkit.mapcompose.demoapp.utils.FONT
+import ru.wb.mapkit.mapcompose.demoapp.utils.collectStyleProviderAsState
 import ru.wb.mapkit.mapcompose.demoapp.utils.produceColorState
 import ru.wb.mapkit.mapcompose.demoapp.utils.produceMoveState
-import ru.wb.mapkit.mapcompose.demoapp.utils.rememberWBStyleProvider
 import ru.wb.mapkit.mapcompose.lib.Attribution
 import ru.wb.mapkit.mapcompose.lib.CameraPosition
 import ru.wb.mapkit.mapcompose.lib.Circle
@@ -48,7 +47,6 @@ object AnnotationsMap : Demo() {
     @Composable
     private fun Map(
         modifier: Modifier = Modifier,
-        isDark: Boolean = isSystemInDarkTheme(),
     ) {
         val moscow = remember {
             CameraPosition(
@@ -64,7 +62,7 @@ object AnnotationsMap : Demo() {
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("map_container"),
-                styleProvider = rememberWBStyleProvider(isDark),
+                styleProvider = collectStyleProviderAsState(),
                 cameraPositionState = cameraPositionState,
                 uiSettings = UiSettings(
                     attribution = Attribution(

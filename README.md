@@ -1,10 +1,11 @@
-# MapLibre Compose
+# WBMap Compose Demo App
 
-A Jetpack Compose wrapper for MapLibre, providing a declarative way to work with maps in your Android application.
+A demo application for a WBMap Compose SDK library.
+WBMap Compose SDK is a Jetpack Compose wrapper for WBMap, providing a declarative way to work with maps in your Android application.
 
 ## Description
 
-MapLibre Compose is a Kotlin library that provides Jetpack Compose bindings for the MapLibre Native SDK. It allows you to easily integrate interactive maps into your Compose-based Android applications using a declarative API.
+WBMap Compose is a Kotlin library that provides Jetpack Compose bindings for the WBMap SDK. It allows you to easily integrate interactive maps into your Compose-based Android applications using a declarative API.
 
 Key features:
 - Seamless integration with Jetpack Compose
@@ -13,20 +14,34 @@ Key features:
 - Support for dynamic styling and property updates
 - Simplified handling of map markers, polygons, and other geometries
 
+### [Changelog](CHANGELOG.md)
+
 ## API Key Setup
 
 To run the application, you need to obtain an API key for map style access.
 
 ### Setting up the Key
 
-Add the key to the `gradle.properties` file in the project root:
+Add the key (in quotes) to the `gradle.properties` file in the project root:
 ```properties
-apiKey=your_api_key_here
+API_KEY="<<PUT YOUR API KEY HERE>>"
+```
+
+## GitHib credentials Setup
+
+To run the application, you need to obtain an GitHub login and token for WBMap Compose sdk access.
+
+### Setting up credentials
+
+Add the credentials (without quotes) to the `gradle.properties` file in the project root:
+```properties
+githubUser=<<PUT YOUR GITHUB LOGIN HERE>>
+githubToken=<<PUT YOUR GITHUB TOKEN HERE>>
 ```
 
 ## Usage Example
 
-Here's a simple example of how to use MapLibre Compose in your application:
+Here's a simple example of how to use WBMap Compose in your application:
 
 ```kotlin
 @Composable
@@ -113,6 +128,6 @@ val moscow = remember {
         zoom = 12.0
     )
 }
-...
+//...
 cameraPositionState.position = moscow
 ```

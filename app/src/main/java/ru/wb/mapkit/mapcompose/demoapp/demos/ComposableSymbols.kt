@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import ru.wb.mapkit.mapcompose.WbMap
+import ru.wb.mapkit.mapcompose.demoapp.utils.collectStyleProviderAsState
 import ru.wb.mapkit.mapcompose.demoapp.utils.generateRandomFeatures
-import ru.wb.mapkit.mapcompose.demoapp.utils.rememberWBStyleProvider
 import ru.wb.mapkit.mapcompose.lib.Attribution
 import ru.wb.mapkit.mapcompose.lib.CameraPosition
 import ru.wb.mapkit.mapcompose.lib.MapObserver
@@ -67,7 +66,6 @@ object ComposableSymbols : Demo() {
     @Composable
     private fun Map(
         modifier: Modifier = Modifier,
-        isDark: Boolean = isSystemInDarkTheme(),
     ) {
         val moscow = remember {
             CameraPosition(
@@ -94,7 +92,7 @@ object ComposableSymbols : Demo() {
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("map_container"),
-                styleProvider = rememberWBStyleProvider(isDark),
+                styleProvider = collectStyleProviderAsState(),
                 cameraPositionState = cameraPositionState,
                 uiSettings = UiSettings(
                     attribution = Attribution(
